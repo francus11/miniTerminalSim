@@ -35,7 +35,7 @@ namespace miniTerminalSim.FileSystem
 
         public int CompareTo(object? obj)
         {
-            return Name.CompareTo(obj);
+            return Name.CompareTo(((IFileSystemComponent)obj).Name);
         }
     }
 }

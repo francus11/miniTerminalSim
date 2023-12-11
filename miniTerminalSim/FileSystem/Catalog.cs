@@ -4,9 +4,11 @@ namespace miniTerminalSim.FileSystem
 {
     internal class Catalog : IFileSystemComponent
     {
-        List<IFileSystemComponent> components = new List<IFileSystemComponent>();
+        private List<IFileSystemComponent> _components = new List<IFileSystemComponent>();
 
         public string Name { get; set; }
+
+        public List<IFileSystemComponent> Components { get { return new List<IFileSystemComponent>(_components); } }
 
         public string Path
         {
@@ -52,28 +54,31 @@ namespace miniTerminalSim.FileSystem
                 return false;
             }
 
-            components.Add(item);
+            _components.Add(item);
             item.Parent = this;
-            components.Sort();
+            _components.Sort();
             return true;
         }
 
         public bool Remove(IFileSystemComponent component)
         {
-            if (components.Any(component => component.Name == component.Name))
+            try
+            {
+                _components.Remove(Select(component.Name));
+                return true;
+            }
+            catch (FileNotFoundException)
             {
                 return false;
             }
-
-            components.Add(component);
-            return true;
+            
         }
 
         public IFileSystemComponent Select(string name)
         {
             try
             {
-                return components.Where(c => c.Name == name).First();
+                return _components.Where(c => c.Name == name).First();
             }
             catch
             {
@@ -83,12 +88,12 @@ namespace miniTerminalSim.FileSystem
 
         public bool Contains(IFileSystemComponent component)
         {
-            return components.Contains(component);
+            return _components.Contains(component);
         }
 
         public bool Contains(string name)
         {
-            return components.Any(component => component.Name == name);
+            return _components.Any(component => component.Name == name);
         }
 
         public object Clone()
