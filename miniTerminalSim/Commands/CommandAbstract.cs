@@ -30,7 +30,6 @@ namespace miniTerminalSim.Commands
             else
             {
                 catalog = fileExplorer.CurrentScope;
-                return null;
             }
 
             try
