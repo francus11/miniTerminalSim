@@ -11,7 +11,7 @@ namespace miniTerminalSim.Commands
 
         public override string[] Execute()
         {
-            if (args == null)
+            if (args == null || args.Length == 0)
             {
                 return null;
             }
@@ -22,31 +22,12 @@ namespace miniTerminalSim.Commands
                 return new string[] { text };
             }
 
-            if (args[0] == "..")
-            {
-                fileExplorer.CurrentScope = fileExplorer.CurrentScope.Parent;
-            }
-
             string[] path = args[0].Split("/");
             Catalog catalog;
 
-            if (path[0] == "")
-            {
-                catalog = fileExplorer.RootCatalog;
-                path = path[1..];
-            }
-            else
-            {
-                catalog = fileExplorer.CurrentScope;
-            }
-
             try
             {
-                foreach (string pathItem in path)
-                {
-
-                    catalog = (Catalog)catalog.Select(pathItem);
-                }
+                catalog = SearchCatalogFromPath(path);
             }
             catch (FileNotFoundException)
             {
