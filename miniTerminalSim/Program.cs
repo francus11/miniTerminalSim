@@ -1,12 +1,19 @@
 ﻿using miniTerminalSim.Commands;
 using miniTerminalSim.FileSystem;
-using System.Data;
 
 namespace miniTerminalSim
 {
     internal class Program
     {
         static private FileExplorer fileExplorer;
+
+        static private Dictionary<string, Func<FileExplorer, string[], CommandAbstract>> commands = new Dictionary<string, Func<FileExplorer, string[], CommandAbstract>>()
+        {
+            { "cd", (explorer, arguments) => new CdCommand(explorer, arguments) },
+            { "cp", (explorer, arguments) => new CpCommand(explorer, arguments) },
+            { "mv", (explorer, arguments) => new MvCommand(explorer, arguments) },
+            { "ls", (explorer, arguments) => new LsCommand(explorer, arguments) }
+        };
 
 
         static void Main(string[] args)
@@ -27,7 +34,7 @@ namespace miniTerminalSim
                         Console.WriteLine(arg);
                     }
                 }
-                
+
             }
         }
 
@@ -47,18 +54,24 @@ namespace miniTerminalSim
 
         static string[] InterpretCommandLine(string command, string[] args)
         {
-            if (command == "cd")
+            /*if (command == "cd")
             {
                 var run = new CdCommand(fileExplorer, args);
                 return run.Execute();
+            }*/
+
+            CommandAbstract execCommand = null;
+            try
+            {
+                execCommand = commands[command](fileExplorer, args);
+            }
+            catch
+            {
+                return null;
             }
 
-            return null;
-        }
+            return execCommand.Execute();
 
-        static void PrintLine(string line)
-        {
-            
         }
 
         //TODO Add cases to handle quotes
@@ -83,7 +96,11 @@ namespace miniTerminalSim
             root.Add(home);
 
             var textFile = new FileMock("text.txt");
+            var textFile2 = new FileMock("text2.txt");
+            var textFile3 = new FileMock("text3.txt");
             user1.Add(textFile);
+            user1.Add(textFile2);
+            user1.Add(textFile3);
 
             FileExplorer fileExplorer = new FileExplorer(root);
             fileExplorer.CurrentScope = home;
