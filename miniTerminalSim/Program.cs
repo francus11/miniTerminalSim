@@ -15,7 +15,8 @@ namespace miniTerminalSim
             { "ls", (explorer, arguments) => new LsCommand(explorer, arguments) },
             { "mkdir", (explorer, arguments) => new MkdirCommand(explorer, arguments) },
             { "touch", (explorer, arguments) => new TouchCommand(explorer, arguments) },
-            { "tree", (explorer, arguments) => new TreeCommand(explorer, arguments) }
+            { "tree", (explorer, arguments) => new TreeCommand(explorer, arguments) },
+            { "more", (explorer, arguments) => new MoreCommand(explorer, arguments) }
         };
 
 
@@ -92,6 +93,7 @@ namespace miniTerminalSim
 
             var rootFile = new FileMock("rootFile.bin");
             root.Add(rootFile);
+            rootFile.Content = new string[] { "Nie powinno cię tu być.", "Wynocha!!!" };
 
             var bin = new Catalog("bin");
             root.Add(bin);
