@@ -24,6 +24,11 @@ namespace miniTerminalSim.Commands
             }
             Catalog catalog;
 
+            if (path.Length == 0)
+            {
+                return fileExplorer.RootCatalog;
+            }
+
             if (path[0] == "")
             {
                 catalog = fileExplorer.RootCatalog;
