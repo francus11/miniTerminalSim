@@ -18,8 +18,10 @@ namespace miniTerminalSim.Commands
 
         protected Catalog SearchCatalogFromPath(string[] path)
         {
-
-            //string[] path = pathLine.Split("/");
+            if (path.Length == 1 && path[0] == "/")
+            {
+                return fileExplorer.RootCatalog;
+            }
             Catalog catalog;
 
             if (path[0] == "")
@@ -60,6 +62,10 @@ namespace miniTerminalSim.Commands
 
         protected string[] PathLineToPath(string pathLine)
         {
+            if (pathLine == "/")
+            {
+                return new string[] { "/" };
+            }
             return pathLine.Split("/");
         }
     }
