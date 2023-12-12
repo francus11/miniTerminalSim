@@ -1,4 +1,5 @@
 ﻿using miniTerminalSim.FileSystem;
+using System.Text.RegularExpressions;
 
 namespace miniTerminalSim.Commands
 {
@@ -24,8 +25,14 @@ namespace miniTerminalSim.Commands
 
                 parentCatalog = SearchCatalogFromPath(PathLineToPath(args[0])[..^1]);
             }
+            string catalogName = PathLineToPath(args[0])[^1];
+            if (ContainsSpecialCharacters(catalogName))
+            {
+                string text = "mkdir: directory can't have special characters in name";
+                return new string[] { text };
+            }
+            Catalog newCatalog = new Catalog(catalogName);
 
-            Catalog newCatalog = new Catalog(PathLineToPath(args[0])[^1]);
             newCatalog.Parent = parentCatalog;
             if (!parentCatalog.Add(newCatalog))
             {
@@ -34,6 +41,14 @@ namespace miniTerminalSim.Commands
             }
 
             return null;
+        }
+        private bool ContainsSpecialCharacters(string text)
+        {
+            string wzorzec = @"[$\\/:*?""<>|]";
+
+            Regex regex = new Regex(wzorzec);
+
+            return regex.IsMatch(text);
         }
     }
 }
