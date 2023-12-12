@@ -1,9 +1,4 @@
 ﻿using miniTerminalSim.FileSystem;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace miniTerminalSim.Commands
 {
@@ -19,52 +14,54 @@ namespace miniTerminalSim.Commands
                 return new string[] { text };
             }
 
+            Catalog catalog1 = null;
+            IFileSystemComponent movedObject = null;
+
             try
             {
-                Catalog catalog1 = null;
-
-                try
-                {
-                    catalog1 = SearchCatalogFromPath(PathLineToPath(args[0])[..-1]);
-                }
-                catch (InvalidCastException)
-                {
-                    throw;
-                }
-                catch (FileNotFoundException)
-                {
-                    throw;
-                }
-
-                IFileSystemComponent movedObject = catalog1.Select(PathLineToPath(args[0])[-1]);
-
-                Catalog catalog2 = null;
-
-                try
-                {
-                    catalog2 = SearchCatalogFromPath(PathLineToPath(args[1]));
-                }
-                catch (InvalidCastException)
-                {
-                    throw;
-                }
-                catch (FileNotFoundException)
-                {
-                    throw;
-                }
-
-                if (!catalog2.Add(movedObject))
-                {
-                    catalog2.Remove(movedObject);
-                    catalog2.Add(movedObject);
-                }
-
-                return null;
+                string[] convertedPath = PathLineToPath(args[0]);
+                convertedPath = convertedPath[..^1];
+                catalog1 = SearchCatalogFromPath(convertedPath);
+                movedObject = catalog1.Select(PathLineToPath(args[0])[^1]);
+                catalog1.Remove(movedObject);
             }
-            catch
+            catch (InvalidCastException)
             {
-                throw;
+                string text = "mv: can't find file or directory";
+                return new string[] { text };
             }
+            catch (FileNotFoundException)
+            {
+                string text = "mv: can't find file or directory";
+                return new string[] { text };
+            }
+
+
+            Catalog catalog2 = null;
+
+            try
+            {
+                catalog2 = SearchCatalogFromPath(PathLineToPath(args[1]));
+            }
+            catch (InvalidCastException)
+            {
+                string text = "mv: can't find file or directory";
+                return new string[] { text };
+            }
+            catch (FileNotFoundException)
+            {
+                string text = "mv: can't find file or directory";
+                return new string[] { text };
+            }
+
+            if (!catalog2.Add(movedObject))
+            {
+                catalog2.Remove(movedObject);
+                catalog2.Add(movedObject);
+                movedObject.Parent = catalog2;
+            }
+
+            return null;
         }
     }
 }
