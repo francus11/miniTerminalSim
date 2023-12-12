@@ -98,7 +98,14 @@ namespace miniTerminalSim.FileSystem
 
         public object Clone()
         {
-            throw new NotImplementedException();
+            Catalog catalog = new Catalog(Name);
+
+            foreach (var item in _components)
+            {
+                catalog.Add((IFileSystemComponent)item.Clone());
+            }
+
+            return catalog;
         }
 
         public int CompareTo(object? obj)
